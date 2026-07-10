@@ -44,6 +44,19 @@ local DEFAULT_SETTINGS = {
     ---@type string | boolean
     quick_select = "123456789",
 
+    ---When true, toggle() prompts for an optional tag name via vim.ui.input
+    ---before creating the tag. An empty input creates an unnamed tag; pressing
+    ---Esc cancels the operation. When false, tags are created silently with no
+    ---name (current default behaviour).
+    ---@type boolean
+    name_on_tag = false,
+
+    ---When true, toggle() asks for confirmation before removing an existing tag.
+    ---The default choice is No, so a plain <CR> is safe. When false, tags are
+    ---removed immediately with no prompt (current default behaviour).
+    ---@type boolean
+    confirm_untag = false,
+
     ---Default command to use when selecting a tag
     ---@type fun(path: string)
     command = vim.cmd.edit,
