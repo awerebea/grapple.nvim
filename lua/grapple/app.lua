@@ -529,7 +529,10 @@ function App:open_tags(opts)
                 elseif style == "basename" then
                     display = vim.fn.fnamemodify(display, ":t")
                 end
-                local w = #display
+                -- +2 for the space Neovim inserts before eol virt_text and
+                -- one extra for any icon padding when name_pos = "start".
+                local name_extra = tag.name and (#tag.name + 2) or 0
+                local w = #display + name_extra
                 if w > max_len then
                     max_len = w
                 end
