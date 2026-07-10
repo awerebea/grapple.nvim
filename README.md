@@ -242,6 +242,16 @@ require("grapple").setup({
     ---@type string | boolean
     quick_select = "123456789",
 
+    ---Prompt for an optional name when creating a tag via toggle()
+    ---Empty input creates an unnamed tag; Esc cancels the operation
+    ---@type boolean
+    name_on_tag = false,
+
+    ---Require confirmation before removing a tag via toggle()
+    ---Default choice is No, so a plain <CR> is safe
+    ---@type boolean
+    confirm_untag = false,
+
     ---Default command to use when selecting a tag
     ---@type fun(path: string)
     command = vim.cmd.edit,
@@ -385,7 +395,10 @@ require("grapple").untag({ scope = "global" })
 
 #### `Grapple.toggle`
 
-Toggle a Grapple tag.
+Toggle a Grapple tag. When [`name_on_tag`](#toggle-prompts) is enabled, a
+name prompt appears before creating a new tag. When
+[`confirm_untag`](#toggle-prompts) is enabled, a confirmation dialog appears
+before removing an existing tag.
 
 **API**: `require("grapple").toggle(opts)`
 
@@ -395,7 +408,14 @@ Toggle a Grapple tag.
 <summary><b>Examples</b></summary>
 
 ```lua
--- Toggle a tag on the current buffer
+-- Toggle a tag on the current buffer (silent, default behaviour)
+require("grapple").toggle()
+
+-- Toggle with interactive prompts enabled in setup()
+require("grapple").setup({
+    name_on_tag = true,   -- prompt for a name when tagging
+    confirm_untag = true, -- confirm before untagging
+})
 require("grapple").toggle()
 ```
 
@@ -817,6 +837,49 @@ require("grapple").setup({
 ```
 
 </details>
+
+## Toggle Prompts
+
+Two optional settings add interactive prompts to the `toggle()` command.
+Both are `false` by default to preserve the current silent behaviour.
+
+### `name_on_tag`
+
+When `name_on_tag = true`, calling `toggle()` on an untagged buffer opens a
+`vim.ui.input` prompt before creating the tag:
+
+- Type a name and press `<CR>` to create a **named** tag.
+- Press `<CR>` on an empty input to create an **unnamed** tag (same as the
+  default behaviour).
+- Press `<Esc>` (or cancel) to abort without creating a tag.
+
+The prompt respects any `vim.ui.input` override active in your configuration
+(e.g. a floating-window input from snacks.nvim or dressing.nvim).
+
+### `confirm_untag`
+
+When `confirm_untag = true`, calling `toggle()` on an already-tagged buffer
+shows a yes/no confirmation dialog before removing the tag. The default choice
+is **No**, so an accidental `<CR>` is safe.
+
+<details>
+<summary><b>Example</b></summary>
+
+```lua
+require("grapple").setup({
+    -- Prompt for a name each time a new tag is created via toggle().
+    name_on_tag = true,
+
+    -- Ask before removing a tag via toggle().
+    confirm_untag = true,
+})
+```
+
+</details>
+
+> [!NOTE]
+> Both settings only affect `toggle()`. Direct calls to `tag()` and `untag()`
+> are always silent and require no confirmation.
 
 ## Grapple Windows
 
