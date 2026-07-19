@@ -203,7 +203,13 @@ function App:toggle(opts)
         end, { scope = opts.scope, scope_id = opts.scope_id })
     else
         if self.settings.name_on_tag then
-            vim.ui.input({ prompt = "Tag name (optional): " }, function(name)
+            local default = nil
+            if self.settings.suggest_name and opts.path then
+                local basename = vim.fn.fnamemodify(opts.path, ":t")
+                -- Hidden files (e.g. ".config") keep their full name; others lose the extension
+                default = basename:sub(1, 1) == "." and basename or vim.fn.fnamemodify(opts.path, ":t:r")
+            end
+            vim.ui.input({ prompt = "Tag name (optional): ", default = default }, function(name)
                 if name == nil then
                     return
                 end

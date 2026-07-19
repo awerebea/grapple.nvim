@@ -57,6 +57,14 @@ local DEFAULT_SETTINGS = {
     ---@type boolean
     confirm_untag = false,
 
+    ---When true and name_on_tag is also true, the vim.ui.input prompt is
+    ---pre-filled with the basename of the current file (without extension).
+    ---Hidden files (e.g. ".config") keep their full name. The user can edit
+    ---or clear the suggestion before confirming. Has no effect when
+    ---name_on_tag is false.
+    ---@type boolean
+    suggest_name = false,
+
     ---Default command to use when selecting a tag
     ---@type fun(path: string)
     command = vim.cmd.edit,

@@ -252,6 +252,12 @@ require("grapple").setup({
     ---@type boolean
     confirm_untag = false,
 
+    ---Pre-fill the name prompt with the file basename (no extension) when
+    ---name_on_tag is true. Hidden files keep their full name.
+    ---e.g. "my_file.txt" -> "my_file", ".config" -> ".config"
+    ---@type boolean
+    suggest_name = false,
+
     ---Default command to use when selecting a tag
     ---@type fun(path: string)
     command = vim.cmd.edit,
@@ -840,8 +846,8 @@ require("grapple").setup({
 
 ## Toggle Prompts
 
-Two optional settings add interactive prompts to the `toggle()` command.
-Both are `false` by default to preserve the current silent behaviour.
+Three optional settings add interactive prompts to the `toggle()` command.
+All are `false` by default to preserve the current silent behaviour.
 
 ### `name_on_tag`
 
@@ -856,6 +862,17 @@ When `name_on_tag = true`, calling `toggle()` on an untagged buffer opens a
 The prompt respects any `vim.ui.input` override active in your configuration
 (e.g. a floating-window input from snacks.nvim or dressing.nvim).
 
+### `suggest_name`
+
+When `suggest_name = true` (and `name_on_tag` is also `true`), the name
+prompt is pre-filled with a suggestion derived from the current file:
+
+- Regular files: basename without extension — `my_file.txt` → `my_file`
+- Hidden files: full basename — `.config` → `.config`
+
+The suggestion is editable; clearing it and pressing `<CR>` still creates an
+unnamed tag. Has no effect when `name_on_tag` is `false`.
+
 ### `confirm_untag`
 
 When `confirm_untag = true`, calling `toggle()` on an already-tagged buffer
@@ -867,8 +884,9 @@ is **No**, so an accidental `<CR>` is safe.
 
 ```lua
 require("grapple").setup({
-    -- Prompt for a name each time a new tag is created via toggle().
+    -- Prompt for a name when tagging, pre-filled with the file stem.
     name_on_tag = true,
+    suggest_name = true,
 
     -- Ask before removing a tag via toggle().
     confirm_untag = true,
@@ -878,8 +896,8 @@ require("grapple").setup({
 </details>
 
 > [!NOTE]
-> Both settings only affect `toggle()`. Direct calls to `tag()` and `untag()`
-> are always silent and require no confirmation.
+> All three settings only affect `toggle()`. Direct calls to `tag()` and
+> `untag()` are always silent and require no confirmation.
 
 ## Grapple Windows
 
